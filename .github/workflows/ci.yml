@@ -69,7 +69,7 @@ jobs:
       # 🚀 编译 Ark（直接从根目录执行）
       - name: Build Ark
         run: |
-          python3 ark.py x64.release
+          python ark.py x64.release
 
       # ✅ 查看空间占用（调试用）
       - name: Disk usage
