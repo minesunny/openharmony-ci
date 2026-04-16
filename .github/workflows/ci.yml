@@ -1,0 +1,77 @@
+name: OpenHarmony Ark Build
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ark-build
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      # ✅ 释放磁盘
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/hostedtoolcache
+          df -h
+
+      # ✅ 基础依赖
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git python3 curl build-essential ninja-build ccache
+
+      # ✅ repo 工具
+      - name: Setup repo
+        run: |
+          mkdir -p ~/bin
+          curl https://gitee.com/oschina/repo/raw/fork_flow/repo-py3 -o ~/bin/repo
+          chmod +x ~/bin/repo
+          echo "$HOME/bin" >> $GITHUB_PATH
+
+      # ✅ Python 依赖
+      - name: Install Python deps
+        run: |
+          pip3 install -i https://pypi.tuna.tsinghua.edu.cn/simple requests
+
+      # ✅ Git 配置
+      - name: Setup Git config
+        run: |
+          git config --global user.email "you@example.com"
+          git config --global user.name "Your Name"
+
+      # ✅ 初始化（GitCode）
+      - name: Repo init
+        run: |
+          repo init \
+            -u https://gitcode.com/ark-standalone-build/manifest.git \
+            -b master \
+            --depth=1
+
+      # ✅ 同步
+      - name: Repo sync
+        run: |
+          repo sync -c -j8
+
+      # ✅ 预下载 prebuilts
+      - name: Download prebuilts
+        run: |
+          chmod +x prebuilts_download.sh || true
+          ./prebuilts_download.sh || ./prebuilts_download.sh
+
+      # 🚀 编译 Ark（直接从根目录执行）
+      - name: Build Ark
+        run: |
+          python3 ark.py x64.release
+
+      # ✅ 查看空间占用（调试用）
+      - name: Disk usage
+        run: |
+          du -h --max-depth=2 | sort -hr | head -n 20
