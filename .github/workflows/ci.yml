@@ -51,7 +51,7 @@ jobs:
       - name: Repo init
         run: |
           repo init \
-            -u https://gitcode.com/ark-standalone-build/manifest.git \
+            -u https://gitee.com/ark-standalone-build/manifest.git \
             -b master \
             --depth=1
 
