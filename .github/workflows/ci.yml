@@ -63,8 +63,7 @@ jobs:
       # ✅ 预下载 prebuilts
       - name: Download prebuilts
         run: |
-          chmod +x prebuilts_download.sh || true
-          ./prebuilts_download.sh || ./prebuilts_download.sh
+           ./build/prebuilts_download/prebuilts_download.sh
 
       # 🚀 编译 Ark（直接从根目录执行）
       - name: Build Ark
