@@ -59,7 +59,10 @@ jobs:
       - name: Repo sync
         run: |
           repo sync -c -j8
-
+      # ✅ 查看prebuilts_download.sh
+      - name: check prebuilts_download.sh
+        run: |
+           ls -lath
       # ✅ 预下载 prebuilts
       - name: Download prebuilts
         run: |
